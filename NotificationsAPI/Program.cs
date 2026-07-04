@@ -25,15 +25,16 @@ builder.Services.AddMassTransit(x =>
             });
 
         cfg.ReceiveEndpoint(
-            "notifications-user-created",
+            "user-created",
             e =>
-            {
+            {   
+                e.UseRawJsonDeserializer(isDefault: true);
                 e.ConfigureConsumer<
                     UserCreatedConsumer>(context);
             });
 
         cfg.ReceiveEndpoint(
-            "notifications-payment-processed",
+            "payment-processed",
             e =>
             {
                 e.ConfigureConsumer<
