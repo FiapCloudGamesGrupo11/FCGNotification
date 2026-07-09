@@ -2,7 +2,6 @@ using MassTransit;
 using NotificationsAPI.Consumers;
 using NotificationsAPI.Services;
 using NotificationsAPI.Events;
-using RabbitMQ.Client;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,16 +34,9 @@ builder.Services.AddMassTransit(x =>
             });
 
         cfg.ReceiveEndpoint(
-            "notification-payment-processed",
+            "payment-processed",
             e =>
             {
-                e.UseRawJsonDeserializer(isDefault: true);
-
-                e.Bind("payment.exchange", x =>
-                {
-                    x.ExchangeType = ExchangeType.Fanout;
-                });
-
                 e.ConfigureConsumer<
                     PaymentProcessedConsumer>(context);
             });
