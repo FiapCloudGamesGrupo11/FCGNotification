@@ -1,7 +1,6 @@
 using MassTransit;
 using NotificationsAPI.Consumers;
 using NotificationsAPI.Events;
-<<<<<<< HEAD
 using NotificationsAPI.Services;
 using RabbitMQ.Client;
 
@@ -26,8 +25,6 @@ builder.Services.AddMassTransit(x =>
             var password = rabbitMqSettings["Password"];
             var userCreatedQueue = rabbitMqSettings["UserCreatedQueueName"];
             var paymentProcessedQueue = rabbitMqSettings["PaymentProcessedQueueName"];
-
-<<<<<<< HEAD
             var logger = context
                 .GetRequiredService<ILoggerFactory>()
                 .CreateLogger("NotificationAPI.RabbitMQ");
@@ -70,23 +67,6 @@ builder.Services.AddMassTransit(x =>
             );
         }
     );
-=======
-        cfg.ReceiveEndpoint(
-            "notification-payment-processed",
-            e =>
-            {
-                e.UseRawJsonDeserializer(isDefault: true);
-
-                e.Bind("payment.exchange", x =>
-                {
-                    x.ExchangeType = ExchangeType.Fanout;
-                });
-
-                e.ConfigureConsumer<
-                    PaymentProcessedConsumer>(context);
-            });
-    });
->>>>>>> 05a4ae7b4b2ee99c547d7178d6426846eaa79a68
 });
 
 builder.Services.AddEndpointsApiExplorer();
