@@ -23,8 +23,8 @@ builder.Services.AddMassTransit(x =>
             var host = rabbitMqSettings["Host"];
             var username = rabbitMqSettings["Username"];
             var password = rabbitMqSettings["Password"];
-            var userCreatedQueue = rabbitMqSettings["UserCreatedQueueName"];
-            var paymentProcessedQueue = rabbitMqSettings["PaymentProcessedQueueName"];
+            var userCreatedQueue = rabbitMqSettings["UserCreatedQueue"];
+            var paymentProcessedQueue = rabbitMqSettings["PaymentProcessedQueue"];
 
             var logger = context
                 .GetRequiredService<ILoggerFactory>()
