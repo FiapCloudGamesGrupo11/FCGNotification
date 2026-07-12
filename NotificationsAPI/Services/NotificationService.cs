@@ -11,4 +11,9 @@ public class NotificationService
     {
         Console.WriteLine($"[EMAIL] Compra confirmada para usuário {userId}");
     }
-}
+
+    public void SendPurchaseRejection(string userId, string status)
+    {
+        Console.WriteLine($"[EMAIL] Compra rejeitada para usuário {userId} com status {status}");
+    }
+}   
