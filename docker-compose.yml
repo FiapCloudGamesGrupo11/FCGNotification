@@ -13,7 +13,7 @@ services:
 
   notifications-api:
     build:
-      context: .
+      context: ./FCGNotification
       dockerfile: Dockerfile
 
     container_name: notifications-api
