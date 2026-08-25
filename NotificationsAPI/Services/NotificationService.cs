@@ -12,8 +12,9 @@ public class NotificationService
         Console.WriteLine($"[EMAIL] Compra confirmada para usuário {userId}");
     }
 
-    public void SendPurchaseRejection(string userId, string status)
+    public void SendPurchaseRejection(string userId, string status, string? reason)
     {
-        Console.WriteLine($"[EMAIL] Compra rejeitada para usuário {userId} com status {status}");
+        Console.WriteLine(
+            $"[EMAIL] Compra rejeitada para usuário {userId} com status {status}. Motivo: {reason ?? "Não informado"}");
     }
-}   
+}

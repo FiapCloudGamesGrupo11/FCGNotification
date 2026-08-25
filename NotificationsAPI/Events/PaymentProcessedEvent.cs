@@ -1,12 +1,30 @@
+using System.Text.Json.Serialization;
+
 namespace NotificationsAPI.Events;
 
 public class PaymentProcessedEvent
 {
-    public Guid UserId { get; set; }
+    [JsonPropertyName("orderId")]
+    public string OrderId { get; set; } = string.Empty;
 
-    public Guid GameId { get; set; }
+    [JsonPropertyName("paymentId")]
+    public string PaymentId { get; set; } = string.Empty;
 
-    public decimal Price { get; set; }
+    [JsonPropertyName("userId")]
+    public string UserId { get; set; } = string.Empty;
 
+    [JsonPropertyName("gameId")]
+    public string GameId { get; set; } = string.Empty;
+
+    [JsonPropertyName("amount")]
+    public decimal Amount { get; set; }
+
+    [JsonPropertyName("status")]
     public string Status { get; set; } = string.Empty;
+
+    [JsonPropertyName("reason")]
+    public string? Reason { get; set; }
+
+    [JsonPropertyName("processedAt")]
+    public DateTime ProcessedAt { get; set; }
 }

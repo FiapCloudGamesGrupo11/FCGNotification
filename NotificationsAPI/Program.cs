@@ -104,10 +104,13 @@ app.MapGet(
         await publish.Publish(
             new PaymentProcessedEvent
             {
-                UserId = Guid.NewGuid(),
-                GameId = Guid.NewGuid(),
-                Price = 100,
+                OrderId = $"ord_{Guid.NewGuid():N}",
+                PaymentId = $"pay_{Guid.NewGuid():N}",
+                UserId = $"usr_{Guid.NewGuid():N}",
+                GameId = $"game_{Guid.NewGuid():N}",
+                Amount = 100,
                 Status = "Approved",
+                ProcessedAt = DateTime.UtcNow,
             }
         );
 

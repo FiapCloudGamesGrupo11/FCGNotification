@@ -19,11 +19,14 @@ public class PaymentProcessedConsumer : IConsumer<PaymentProcessedEvent>
 
         if (payment.Status.Equals("Approved", StringComparison.OrdinalIgnoreCase))
         {
-            _notificationService.SendPurchaseConfirmation(payment.UserId.ToString());
+            _notificationService.SendPurchaseConfirmation(payment.UserId);
         }
         else
         {
-            _notificationService.SendPurchaseRejection(payment.UserId.ToString(), payment.Status);
+            _notificationService.SendPurchaseRejection(
+                payment.UserId,
+                payment.Status,
+                payment.Reason);
         }
 
         return Task.CompletedTask;
