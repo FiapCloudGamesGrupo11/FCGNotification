@@ -2,18 +2,25 @@ namespace NotificationsAPI.Services;
 
 public class NotificationService
 {
-    public void SendWelcomeEmail(string email, string userId)
+    public Task SendWelcomeEmailAsync(string email, string userId)
     {
         Console.WriteLine($"[EMAIL] Bem-vindo enviado para usuário {userId} e email {email}");
+
+        return Task.CompletedTask;
     }
 
-    public void SendPurchaseConfirmation(string userId)
+    public Task SendPurchaseConfirmationAsync(string userId)
     {
         Console.WriteLine($"[EMAIL] Compra confirmada para usuário {userId}");
+
+        return Task.CompletedTask;
     }
 
-    public void SendPurchaseRejection(string userId, string status)
+    public Task SendPurchaseRejectionAsync(string userId, string status, string? reason)
     {
-        Console.WriteLine($"[EMAIL] Compra rejeitada para usuário {userId} com status {status}");
+        Console.WriteLine(
+            $"[EMAIL] Compra rejeitada para usuário {userId} com status {status}. Motivo: {reason ?? "Não informado"}");
+
+        return Task.CompletedTask;
     }
-}   
+}
