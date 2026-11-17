@@ -98,6 +98,11 @@ jobs:
             --handler NotificationsAPI::NotificationsAPI.Function::FunctionHandler \
             --region us-east-1
           
+          # Aguardar o update de configuração ser concluído
+          aws lambda wait function-updated \
+            --function-name "$LAMBDA_FUNCTION_NAME" \
+            --region us-east-1
+          
           echo "✓ Handler da Lambda configurado com sucesso!"
 
       - name: Publicar versão da função
