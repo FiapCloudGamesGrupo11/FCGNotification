@@ -88,6 +88,18 @@ jobs:
           
           echo "✓ Lambda function atualizada com sucesso!"
 
+      - name: Atualizar Handler da Lambda
+        env:
+          LAMBDA_FUNCTION_NAME: FCG-Notification
+        run: |
+          set -euo pipefail
+          aws lambda update-function-configuration \
+            --function-name "$LAMBDA_FUNCTION_NAME" \
+            --handler NotificationsAPI::NotificationsAPI.Function::FunctionHandler \
+            --region us-east-1
+          
+          echo "✓ Handler da Lambda configurado com sucesso!"
+
       - name: Publicar versão da função
         env:
           LAMBDA_FUNCTION_NAME: FCG-Notification
