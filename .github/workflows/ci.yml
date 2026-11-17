@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - feature/**
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore NotificationsAPI -p:NuGetAudit=true -warnaserror:NU1901,NU1902,NU1903,NU1904
+
+      - name: Build
+        run: dotnet build NotificationsAPI --configuration Release --no-restore
+
+      - name: Publish Lambda
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature/'))
+        run: dotnet publish NotificationsAPI --configuration Release --no-build --output ./publish
+
+  deploy-to-lambda:
+    needs: build-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature/'))
+    concurrency:
+      group: fcg-notifications-lambda-deploy
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Autenticar na AWS via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::432342421632:role/GithubActionsOidcRole
+          aws-region: us-east-1
+
+      - name: Restaurar dependências
+        run: dotnet restore NotificationsAPI
+
+      - name: Publicar função Lambda
+        run: dotnet publish NotificationsAPI --configuration Release --output ./publish
+
+      - name: Criar ZIP para Lambda
+        run: |
+          cd ./publish
+          zip -r ../lambda-function.zip .
+          cd ..
+
+      - name: Fazer deploy para Lambda
+        env:
+          LAMBDA_FUNCTION_NAME: FCG-Notification
+        run: |
+          set -euo pipefail
+          aws lambda update-function-code \
+            --function-name "$LAMBDA_FUNCTION_NAME" \
+            --zip-file fileb://lambda-function.zip \
+            --region us-east-1
+          
+          # Aguardar o update ser concluído
+          aws lambda wait function-updated \
+            --function-name "$LAMBDA_FUNCTION_NAME" \
+            --region us-east-1
+          
+          echo "✓ Lambda function atualizada com sucesso!"
+
+      - name: Publicar versão da função
+        env:
+          LAMBDA_FUNCTION_NAME: FCG-Notification
+          IMAGE_TAG: ${{ github.ref == 'refs/heads/main' && 'latest' || 'dev' }}
+        run: |
+          aws lambda publish-version \
+            --function-name "$LAMBDA_FUNCTION_NAME" \
+            --description "Build ${{ github.sha }} - Branch ${{ github.ref_name }}" \
+            --region us-east-1
